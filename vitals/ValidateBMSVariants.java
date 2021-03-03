@@ -1,27 +1,31 @@
 package vitals;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author {@literal Jayaram Naveenkumar (jayaram.naveenkumar@in.bosch.com)}
  */
 public class ValidateBMSVariants {
 
-    private final boolean variant;
+    private final Predicate<Float> variant;
     private final String message;
+    private final Float value;
 
     public ValidateBMSVariants(
-        boolean variant,
+        Predicate<Float> variant,
+        Float value,
         String message
     )
     {
+        this.value = value;
         this.variant = variant;
         this.message = message;
     }
 
     public boolean isNotValid()
     {
-        return variant;
+        return variant.test(value);
     }
 
     public String getMessage()

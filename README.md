@@ -6,7 +6,7 @@ Electric Vehicles have BMS - Battery Management Systems
 
 [Wikipedia gives an idea of the types and topologies](https://en.wikipedia.org/wiki/Battery_management_system)
 
-[This site gives the optimum Charging-temperatureThreshold limits](https://batteryuniversity.com/learn/article/charging_at_high_and_low_temperatures)
+[This site gives the optimum Charging-temperature limits](https://batteryuniversity.com/learn/article/charging_at_high_and_low_temperatures)
 
 [This abstract suggests a range for the optimum State of Charge](https://www.sciencedirect.com/science/article/pii/S2352484719310911)
 

@@ -34,13 +34,7 @@ public class ValidateBMSVariants {
         return message;
     }
 
-    public static boolean check(List<ValidateBMSVariants> validateBMSVariants) {
-        ValidateBMSVariants batteryStatus =
-            validateBMSVariants.stream().filter(ValidateBMSVariants::isNotValid).findFirst().orElse(null);
-        if (batteryStatus != null) {
-            System.out.println(batteryStatus.getMessage());
-            return false;
-        }
-        return true;
+    public static ValidateBMSVariants check(List<ValidateBMSVariants> validateBMSVariants) {
+        return validateBMSVariants.stream().filter(ValidateBMSVariants::isNotValid).findFirst().orElse(null);
     }
 }

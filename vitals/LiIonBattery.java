@@ -34,20 +34,55 @@ public class LiIonBattery {
         input.put(BMS.CHARGINGRATE, chargeRate);
     }
 
+    public static Predicate<Float> isAboveThreshold(float maxThreshold) {
+        return value -> value > maxThreshold;
+    }
+
+    public static Predicate<Float> isBelowThreshold(float minThreshold) {
+        return value -> value < minThreshold;
+    }
+
+    private List<ValidateBMSVariants> variants() {
+        List<ValidateBMSVariants> validateBMSVariants = new ArrayList<>();
+        validateBMSVariants.add(new ValidateBMSVariants(isBelowThreshold(Temperature.MIN_TEMPERATURE_THRESHOLD),
+              input.get(BMS.TEMPERATURE), "Temperature is below threshold value"
+        ));
+        validateBMSVariants.add(new ValidateBMSVariants(isAboveThreshold(Temperature.MAX_TEMPERATURE_THRESHOLD),
+              input.get(BMS.TEMPERATURE), "Temperature is above threshold value"
+        ));
+        validateBMSVariants.add(new ValidateBMSVariants(isBelowThreshold(StateOfCharge.MIN_SOC),
+              input.get(BMS.SOC), "StateOfCharge is below threshold value"
+        ));
+        validateBMSVariants.add(new ValidateBMSVariants(isAboveThreshold(StateOfCharge.MAX_SOC),
+              input.get(BMS.SOC), "StateOfCharge is above threshold value"
+        ));
+        validateBMSVariants.add(new ValidateBMSVariants(isAboveThreshold(ChargingRate.MAX_CHARGING_RATE),
+              input.get(BMS.CHARGINGRATE), "ChargingRate is above threshold value"
+        ));
+        return validateBMSVariants;
+    }
+
+    public static boolean isBatteryOk(
+          float temperature,
+          float soc,
+          float chargeRate
+    )
+    {
+        LiIonBattery lionBattery = new LiIonBattery(temperature, soc, chargeRate);
+        ValidateBMSVariants validateBMSVariants = ValidateBMSVariants.check(lionBattery.variants());
+        if(validateBMSVariants != null){
+            System.out.println(validateBMSVariants.getMessage());
+            return false;
+        }
+        return true;
+    }
+
     public static final class Temperature {
 
         private static final float MAX_TEMPERATURE_THRESHOLD = 45;
         private static final float MIN_TEMPERATURE_THRESHOLD = 0;
 
         private Temperature() {
-        }
-
-        public static Predicate<Float> isBeyondThreshold() {
-            return soc -> soc > MAX_TEMPERATURE_THRESHOLD;
-        }
-
-        public static Predicate<Float> isBelowThreshold() {
-            return soc -> soc < MIN_TEMPERATURE_THRESHOLD;
         }
     }
 
@@ -58,14 +93,6 @@ public class LiIonBattery {
 
         private StateOfCharge() {
         }
-
-        public static Predicate<Float> isBeyondThreshold() {
-            return soc -> soc > MAX_SOC;
-        }
-
-        public static Predicate<Float> isBelowThreshold() {
-            return soc -> soc < MIN_SOC;
-        }
     }
 
     public static final class ChargingRate {
@@ -74,40 +101,6 @@ public class LiIonBattery {
 
         private ChargingRate() {
         }
-
-        public static Predicate<Float> isBeyondThreshold() {
-            return soc -> soc > MAX_CHARGING_RATE;
-        }
-    }
-
-    private List<ValidateBMSVariants> variants() {
-        List<ValidateBMSVariants> validateBMSVariants = new ArrayList<>();
-        validateBMSVariants.add(new ValidateBMSVariants(Temperature.isBelowThreshold(),
-            input.get(BMS.TEMPERATURE), "Temperature is below threshold value"
-        ));
-        validateBMSVariants.add(new ValidateBMSVariants(Temperature.isBeyondThreshold(),
-            input.get(BMS.TEMPERATURE), "Temperature is above threshold value"
-        ));
-        validateBMSVariants.add(new ValidateBMSVariants(StateOfCharge.isBelowThreshold(),
-            input.get(BMS.SOC), "StateOfCharge is below threshold value"
-        ));
-        validateBMSVariants.add(new ValidateBMSVariants(StateOfCharge.isBeyondThreshold(),
-            input.get(BMS.SOC), "StateOfCharge is above threshold value"
-        ));
-        validateBMSVariants.add(new ValidateBMSVariants(ChargingRate.isBeyondThreshold(),
-            input.get(BMS.CHARGINGRATE), "ChargingRate is above threshold value"
-        ));
-        return validateBMSVariants;
-    }
-
-    public static boolean isBatteryOk(
-        float temperature,
-        float soc,
-        float chargeRate
-    )
-    {
-        LiIonBattery lionBattery = new LiIonBattery(temperature, soc, chargeRate);
-        return ValidateBMSVariants.check(lionBattery.variants());
     }
 
 }

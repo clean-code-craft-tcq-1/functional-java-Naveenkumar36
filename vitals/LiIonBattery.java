@@ -6,32 +6,34 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 
+import static vitals.BatteryManagementSystem.*;
+
 /**
  * @author {@literal Jayaram Naveenkumar (jayaram.naveenkumar@in.bosch.com)}
  */
 public class LiIonBattery {
 
-    private Map<BMS, Float> input;
+    private Map<BatteryManagementSystem, Float> input;
 
     public LiIonBattery(
-        float temperature,
-        float soc,
-        float chargeRate
+          float temperature,
+          float soc,
+          float chargeRate
     )
     {
         saveInput(temperature, soc, chargeRate);
     }
 
     private void saveInput(
-        float temperature,
-        float soc,
-        float chargeRate
+          float temperature,
+          float soc,
+          float chargeRate
     )
     {
         input = new TreeMap<>();
-        input.put(BMS.TEMPERATURE, temperature);
-        input.put(BMS.SOC, soc);
-        input.put(BMS.CHARGINGRATE, chargeRate);
+        input.put(TEMPERATURE, temperature);
+        input.put(SOC, soc);
+        input.put(CHARGINGRATE, chargeRate);
     }
 
     public static Predicate<Float> isAboveThreshold(float maxThreshold) {
@@ -45,19 +47,19 @@ public class LiIonBattery {
     private List<ValidateBMSVariants> variants() {
         List<ValidateBMSVariants> validateBMSVariants = new ArrayList<>();
         validateBMSVariants.add(new ValidateBMSVariants(isBelowThreshold(Temperature.MIN_TEMPERATURE_THRESHOLD),
-              input.get(BMS.TEMPERATURE), "Temperature is below threshold value"
+              input.get(TEMPERATURE), "Temperature is below threshold value"
         ));
         validateBMSVariants.add(new ValidateBMSVariants(isAboveThreshold(Temperature.MAX_TEMPERATURE_THRESHOLD),
-              input.get(BMS.TEMPERATURE), "Temperature is above threshold value"
+              input.get(TEMPERATURE), "Temperature is above threshold value"
         ));
         validateBMSVariants.add(new ValidateBMSVariants(isBelowThreshold(StateOfCharge.MIN_SOC),
-              input.get(BMS.SOC), "StateOfCharge is below threshold value"
+              input.get(SOC), "StateOfCharge is below threshold value"
         ));
         validateBMSVariants.add(new ValidateBMSVariants(isAboveThreshold(StateOfCharge.MAX_SOC),
-              input.get(BMS.SOC), "StateOfCharge is above threshold value"
+              input.get(SOC), "StateOfCharge is above threshold value"
         ));
         validateBMSVariants.add(new ValidateBMSVariants(isAboveThreshold(ChargingRate.MAX_CHARGING_RATE),
-              input.get(BMS.CHARGINGRATE), "ChargingRate is above threshold value"
+              input.get(CHARGINGRATE), "ChargingRate is above threshold value"
         ));
         return validateBMSVariants;
     }
@@ -70,7 +72,7 @@ public class LiIonBattery {
     {
         LiIonBattery lionBattery = new LiIonBattery(temperature, soc, chargeRate);
         ValidateBMSVariants validateBMSVariants = ValidateBMSVariants.check(lionBattery.variants());
-        if(validateBMSVariants != null){
+        if (validateBMSVariants != null) {
             System.out.println(validateBMSVariants.getMessage());
             return false;
         }
